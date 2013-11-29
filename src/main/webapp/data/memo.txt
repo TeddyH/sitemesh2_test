@@ -1,0 +1,121 @@
+#########################################################################
+function gotoMypage(cmd) {
+	var devTpCd = "<s:property value='#session.MEMBER_SESSION.devTpCd'/>";
+	if(devTpCd == "US000404"){
+		alert("This account is only available in T store developer center");
+		return;
+	}
+	var lnbMbrClass = "<s:property value='%{#session.MEMBER_SESSION.mbrCatCd}'/>";
+	var dpCatNo = "";
+	var url = "";
+	var t_top = "";
+	var stActionPositionNm = "";
+	if(lnbMbrClass == "US000201") {	//모바일 회원
+		if (cmd == "COUPON") {		//쿠폰함
+			url = "${pageContext.request.contextPath }/coupon/couponList.omp";
+			dpCatNo = "DP11006";
+		}else if (cmd == "CASH") {	//T Cash
+			url = "${pageContext.request.contextPath }/mypage/gotoCashChargeList.omp";
+			dpCatNo = "DP11007";
+		}else if (cmd == "WISH") {	//관심상품
+			url = "${pageContext.request.contextPath }/mypage/gotoWishList.omp";
+			dpCatNo = "DP11002";
+		}else if (cmd == "GIFT") { //선물함
+			url = "${pageContext.request.contextPath }/mypage/gotoRecvGiftBox.omp";
+			dpCatNo = "DP10015";
+		}else {						//업데이트
+			url = "${pageContext.request.contextPath }/mypage/viewUpdateNotificationList.omp";
+			dpCatNo = "DP11005";
+		}
+	}else {							//웹회원
+		if (cmd == "COUPON") {		//쿠폰함
+			url = "http://<%=Constants.USER_POC_IP%>${pageContext.request.contextPath }/coupon/couponList.omp";
+			t_top = "DP000523";
+			dpCatNo = "DP23005";
+		}else if (cmd == "CASH") {	//T Cash
+			url = "http://<%=Constants.USER_POC_IP%>${pageContext.request.contextPath }/mypage/gotoCashChargeList.omp";
+			t_top = "DP000523";
+			dpCatNo = "DP23004";
+			stActionPositionNm="K3";
+		}else if (cmd == "WISH") {	//관심상품
+			url = "${pageContext.request.contextPath }/mypage/gotoWishList.omp";
+			dpCatNo = "DP10003";
+		}else if (cmd == "GIFT") { //선물함
+			url = "http://<%=Constants.USER_POC_IP%>${pageContext.request.contextPath }/mypage/gotoRecvGiftBox.omp";
+			t_top = "DP000523";
+			dpCatNo = "DP23006001";
+		}else if (cmd == "FACEBOOK") { //FACEBOOK
+			//1.,로그인 체크
+			//loginChk();
+			//2.페이스북 연동 유무
+			//3.비연동상태이면 => Oauth승인 요청 이동
+			//t_top=DP000523&dpCatNo=DP23001005
+
+			loginChk2( );
+
+		}else {						//업데이트
+			url = "http://<%=Constants.USER_POC_IP%>${pageContext.request.contextPath }/mypage/viewUpdateNotificationList.omp";
+			t_top = "DP000523";
+			dpCatNo = "DP23003";
+		}
+	}
+	if (cmd != "FACEBOOK")
+		location.href = url + "?dpCatNo=" + dpCatNo + "&t_top=" + t_top+"&stActionPositionNm="+stActionPositionNm+"&stPrePageNm=<s:property value='dpCatNo' />";
+}
+
+####################################################################
+
+
+
+아이디/비밀번호 찾기 
+https://stg.tstore.co.kr/userpoc/sign/find.omp?dpCatNo=DP24001&stPrePageNm=DP00&stActionPositionNm=K1
+
+struts-sign.xml > find > SignFindAction > 
+
+휴대기기 설정 
+
+http://www.tstore.co.kr/userpoc/registerPhone/popupGotoNotLoginSearchPhoneByComp.omp?dpCatNo=DP30006
+
+struts-registerPhone.xml > popupGotoNotLoginSearchPhoneByComp > RegisterPhoneAction > gotoNotLoginSearchPhoneByComp
+
+/jsp/user/consumer/pop/popupSearchPhoneByComp.jsp
+
+
+
+마이페이지 > 회원 탈퇴 > 화면 로드
+https://www.tstore.co.kr/userpoc/mypage/goMemberSecession.omp?t_top=DP000523&dpCatNo=DP23001006&stPrePageNm=DP23005
+
+struts-mypage.xml > goMemberSecession > MemberSecessionAction > goMemberSecession
+
+마이페이지 > 회원 탈퇴 > 회원 탈퇴하기 처리
+struts-mypage.xml > execImMemberSecession > MemberSecessionAction > 
+
+
+
+마이페이지 > 개인정보 > 기기등록/설정 
+https://www.tstore.co.kr/userpoc/consumer/mypageIdentification.omp?forwardType=1&t_top=DP000523&dpCatNo=DP23001002&stPrePageNm=DP23
+
+
+기기 추가 등록 
+https://www.tstore.co.kr/userpoc/registerPhone/popupImRegisterPhone.omp?registerPhoneType=customerModify
+
+
+
+
+
+
+회원탈퇴		회원탈퇴	CouponProductListService getCouponProductListCount (쿠폰함 쿠폰 count 조회)
+			CashService getTotalAvailAmt (총가용금액 조회)
+			ImIDPManager checkIdPwdAuth (2.2.10 통합 ID 전환시동일회원확인(SP용))
+			MemberSecessionService updateMember (MY PAGE 개인정보 회원탈퇴)
+			updateMemberHp (hpNo invalid 처리)
+			GameCenterUserDataSyncService insertChangeData (변경 데이타 저장)
+			ModifyConsumerInfoServiceImpl getMyPhoneList (My Phone List 조회)
+			AomService getAomTokenCnt (토큰확인)
+			insertAomMsg
+			insertTokenNullMsg
+
+
+
+TBL_AOM_QUEUE
+=> T STORE CLIENT 에 설치되어 PUSH 나 NOTI 기능을 하는 AGENT 임.
